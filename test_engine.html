@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mupal Madness Engine Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      line-height: 1.4;
+    }
+
+    h1, h2, h3 {
+      margin-bottom: 8px;
+    }
+
+    .section {
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fcfcfc;
+}
+
+    .bracket {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    .round-column {
+      min-width: 240px;
+    }
+
+    .round-title {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .matchup {
+  margin-top: 12px;
+  margin-bottom: 18px;
+  padding: 14px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+    .winner {
+      margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .champion-box {
+      padding: 12px;
+      background: #eef7ee;
+      border: 1px solid #b7d7b7;
+      border-radius: 8px;
+    }
+
+    .small {
+      font-size: 0.92rem;
+      color: #444;
+    }
+    .student-highlight {
+      border: 2px solid #2b6cb0;
+      background: #ebf8ff;
+      box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.15);
+    }
+
+    .student-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-radius: 999px;
+      background: #2b6cb0;
+      color: white;
+      vertical-align: middle;
+    }
+
+    .student-name {
+      color: #1a365d;
+    }
+button {
+  margin-top: 12px;
+  padding: 14px 22px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  background: #2b6cb0;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.92;
+}
+.mod-positive {
+  color: #2f855a;
+  font-weight: bold;
+}
+
+.mod-negative {
+  color: #c53030;
+  font-weight: bold;
+}
+
+.mod-neutral {
+  color: #2d3748;
+}
+.match-results {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.match-column {
+  flex: 1;
+  min-width: 0;
+}
+.result-winner {
+  border: 2px solid #38a169;
+  background: #f0fff4;
+}
+
+.result-loser {
+  background: #f7f7f7;
+}
+
+.result-dim {
+  opacity: 0.72;
+  filter: grayscale(0.35);
+}
+
+.mod-box {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.mod-box-positive {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.mod-box-negative {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.mod-box-neutral {
+  background: #edf2f7;
+  color: #2d3748;
+}
+.champion-stage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 20px auto;
+  padding-top: 20px;
+  min-height: 340px;
+}
+
+.podium-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 140px;
+  z-index: 3;
+}
+
+.podium-center {
+  position: absolute;
+  bottom: 0;
+  left: 80px;
+  width: 100px;
+  height: 110px;
+  background: #d9d9d9;
+  border: 2px solid #bcbcbc;
+  border-radius: 10px 10px 0 0;
+}
+
+.podium-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 75px;
+  background: #e6e6e6;
+  border: 2px solid #cfcfcf;
+  border-radius: 10px 10px 0 0;
+}
+
+.podium-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 75px;
+  background: #e6e6e6;
+  border: 2px solid #cfcfcf;
+  border-radius: 10px 10px 0 0;
+}
+
+.podium-label {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #555;
+  bottom: 10px;
+}
+
+.champion-on-podium {
+  position: absolute;
+  left: 50%;
+  bottom: 77px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10px;
+  width: 10px;
+  height: 16px;
+  opacity: 0.9;
+  animation: confetti-fall 2.8s linear infinite;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.confetti-piece:nth-child(1)  { left: 8%;  animation-delay: 0s;    background: #f6ad55; }
+.confetti-piece:nth-child(2)  { left: 18%; animation-delay: 0.3s;  background: #68d391; }
+.confetti-piece:nth-child(3)  { left: 28%; animation-delay: 0.8s;  background: #63b3ed; }
+.confetti-piece:nth-child(4)  { left: 38%; animation-delay: 0.1s;  background: #fc8181; }
+.confetti-piece:nth-child(5)  { left: 48%; animation-delay: 1.0s;  background: #b794f4; }
+.confetti-piece:nth-child(6)  { left: 58%; animation-delay: 0.5s;  background: #f6e05e; }
+.confetti-piece:nth-child(7)  { left: 68%; animation-delay: 1.2s;  background: #4fd1c5; }
+.confetti-piece:nth-child(8)  { left: 78%; animation-delay: 0.6s;  background: #f687b3; }
+.confetti-piece:nth-child(9)  { left: 88%; animation-delay: 0.2s;  background: #90cdf4; }
+.confetti-piece:nth-child(10) { left: 14%; animation-delay: 1.4s;  background: #f6ad55; }
+.confetti-piece:nth-child(11) { left: 34%; animation-delay: 1.7s;  background: #68d391; }
+.confetti-piece:nth-child(12) { left: 54%; animation-delay: 1.1s;  background: #fc8181; }
+.confetti-piece:nth-child(13) { left: 74%; animation-delay: 1.6s;  background: #b794f4; }
+.confetti-piece:nth-child(14) { left: 92%; animation-delay: 1.9s;  background: #f6e05e; }
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(300px) rotate(360deg);
+    opacity: 0.15;
+  }
+}
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 20px 16px;
+  border: 1px solid #d6e4f0;
+  border-radius: 14px;
+  background: linear-gradient(to bottom, #f7fbff, #eef6ff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #1a365d;
+}
+
+.app-subtitle {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #4a5568;
+}
+.center-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* vertical center */
+  align-items: center;      /* horizontal center */
+  height: 70vh;             /* takes most of screen height */
+  text-align: center;
+}
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.logo-corner {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 360px;
+  opacity: 0.9;
+  animation: fadeInLogo 0.8s ease-out;
+}
+
+@keyframes fadeInLogo {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+}
+.creation-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.creation-left {
+  flex: 1;
+}
+
+.creation-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.creation-right .section {
+  width: 100%;
+  max-width: 320px;
+}
+
+.creation-bottom {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.creation-right img {
+  transform: scale(1.15);
+}
+
+.trait-pop {
+  animation: traitPop 0.35s ease-out;
+}
+
+@keyframes traitPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.mupal-alive {
+  animation: mupalAlive 3s ease-in-out infinite;
+}
+
+@keyframes mupalAlive {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+@media (max-width: 700px) {
+  .creation-layout {
+    flex-direction: column;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <h1 class="app-title">Mupal Madness! Exploring Natural Selection </h1>
+    <div class="app-subtitle">Investigate how trait advantages depend on environmental conditions.</div>
+  </div>
+
+  <div id="output"></div>
+
+  <script src="mupal_engine_v1.js"></script>
+  <script>
+
+function getStudentBadge(mupal) {
+  return mupal.isStudent ? `<span class="student-badge">Your Mupal</span>` : "";
+}
+
+function formatMupal(mupal) {
+  const nameClass = mupal.isStudent ? "student-name" : "";
+  return `
+    <span class="${nameClass}">${mupal.name}</span>
+    ${getStudentBadge(mupal)}
+    <span class="small">(${mupal.ears}, ${mupal.eyes})</span>
+  `;
+}
+let currentScreen = "home";
+
+let revealedMatches = {
+  round1: false,
+  round1match2: false,
+  round1match3: false,
+  round1match4: false,
+  round2: false,
+  round2match2: false,
+  final: false
+};
+let predictions = {
+  round1: null,
+  round1match2: null,
+  round1match3: null,
+  round1match4: null,
+  round2: null,
+  round2match2: null,
+  final: null
+};
+let intervention = {
+  trait: null,   // "ears" or "eyes"
+  direction: null // "up" or "down"
+};
+let studentReinsertedAfterIntervention = false;
+let rollingStates = {
+  round1: false,
+  round1match2: false,
+  round1match3: false,
+  round1match4: false,
+  round2: false,
+  round2match2: false,
+  final: false
+};
+
+    let studentMupalState = {
+  name: "",
+  ears: "",
+  eyes: ""
+};
+
+let result = null;
+
+const EAR_TRAIT_OPTIONS = [
+  "ears_super_small",
+  "ears_small",
+  "ears_medium",
+  "ears_large",
+  "ears_very_large"
+];
+
+const EYE_TRAIT_OPTIONS = [
+  "eyes_very_small",
+  "eyes_small",
+  "eyes_medium",
+  "eyes_large",
+  "eyes_very_large"
+];
+
+function getTraitDisplayLabel(traitId) {
+  const labels = {
+    ears_super_small: "Super small, super hairy ears",
+    ears_small: "Small, hairy ears",
+    ears_medium: "Medium, not hairy ears",
+    ears_large: "Large, not hairy ears",
+    ears_very_large: "Very large ears with extra capillaries",
+    eyes_very_small: "Very small eyes, excellent color vision",
+    eyes_small: "Small eyes, good color vision",
+    eyes_medium: "Medium eyes, fair color vision",
+    eyes_large: "Large eyes, poor color vision",
+    eyes_very_large: "Very large eyes, no color vision"
+  };
+
+  return labels[traitId] || traitId;
+}
+function getEarImage(trait) {
+  return `assets/ears/${trait}.png`;
+}
+
+function getEyeImage(trait) {
+  return `assets/eyes/${trait}.png`;
+}
+function renderMupalVisual(mupal) {
+  return `
+    <div style="text-align: center;">
+      <div style="
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.2));
+">
+
+        <!-- Body (bottom) -->
+        <img src="assets/body/mupal_body.png"
+             style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1;" />
+
+        <!-- Ears (middle) -->
+        <img src="${getEarImage(mupal.ears)}"
+             style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 2;" />
+
+        <!-- Eyes (top) -->
+        <img src="${getEyeImage(mupal.eyes)}"
+             style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 3;" />
+      </div>
+
+      <div class="small" style="margin-top: 8px;">
+        <strong class="${mupal.isStudent ? "student-name" : ""}">${mupal.name}</strong>
+        ${getStudentBadge(mupal)}
+      </div>
+
+      <div class="small">Ears: ${getTraitDisplayLabel(mupal.ears)}</div>
+      <div class="small">Eyes: ${getTraitDisplayLabel(mupal.eyes)}</div>
+    </div>
+  `;
+}
+function renderMupalImageOnly(mupal) {
+  return `
+    <div class="mupal-alive" style="
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.2));
+">
+
+      <img src="assets/body/mupal_body.png"
+           style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" />
+
+      <img src="${getEarImage(mupal.ears)}"
+           style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" />
+
+      <img src="${getEyeImage(mupal.eyes)}"
+           style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;" />
+
+    </div>
+  `;
+}
+function renderPartialMupalVisual(mupal) {
+  return `
+    <div class="mupal-alive" style="
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+">
+
+        <!-- Body -->
+        <img src="assets/body/mupal_body.png"
+     style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1;" />
+
+        <!-- Ears (only if rolled) -->
+        ${
+  mupal.ears
+    ? `<img src="${getEarImage(mupal.ears)}"
+           class="trait-pop"
+           style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 2;" />`
+    : ""
+}
+
+        <!-- Eyes (only if rolled) -->
+        ${
+  mupal.eyes
+    ? `<img src="${getEyeImage(mupal.eyes)}"
+           class="trait-pop"
+           style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 3;" />`
+    : ""
+}
+
+      </div>
+  `;
+}
+function renderChampionCelebration(mupal) {
+  return `
+    <div class="champion-stage">
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+      <div class="confetti-piece"></div>
+
+      <div class="champion-on-podium">
+        ${renderMupalImageOnly(mupal)}
+      </div>
+
+      <div class="podium-wrap">
+        <div class="podium-left"></div>
+        <div class="podium-center">
+          <div class="podium-label">1</div>
+        </div>
+        <div class="podium-right"></div>
+      </div>
+    </div>
+  `;
+}
+function getTemperatureIcon(temperature) {
+  const icons = {
+    cold: "❄️",
+    temperate: "🍃",
+    hot: "☀️"
+  };
+
+  return icons[temperature] || "";
+}
+
+function getLightIcon(light) {
+  const icons = {
+    bright: "🌞",
+    variable: "⛅",
+    dark: "🌙"
+  };
+
+  return icons[light] || "";
+}
+
+function getModifierClass(value) {
+  if (value > 0) return "mod-positive";
+  if (value < 0) return "mod-negative";
+  return "mod-neutral";
+}
+function formatScoreDetails(label, mupal, scoreData, isWinner) {
+  const studentClass = mupal.isStudent ? "student-highlight" : "";
+const winnerClass = isWinner ? "result-winner" : "result-loser";
+const dimClass = isWinner ? "" : "result-dim";
+
+return `
+  <div class="${dimClass}">
+  <div>
+    <strong>${label}: <span class="${mupal.isStudent ? "student-name" : ""}">${mupal.name}</span></strong>
+    ${getStudentBadge(mupal)}
+  </div>
+
+  <div class="small"><strong>Traits</strong></div>
+  <div class="small">Ears: ${getTraitDisplayLabel(mupal.ears)}</div>
+  <div class="small">Eyes: ${getTraitDisplayLabel(mupal.eyes)}</div>
+</div>
+
+      <div class="small" style="margin-top: 6px;"><strong>Matchup</strong></div>
+      <div class="small">Base roll: ${scoreData.baseRoll}</div>
+
+      <div class="small">
+  Ears (temperature):
+  <span class="${getModifierBoxClass(scoreData.earModifier)}">
+    ${scoreData.earModifier > 0 ? "+" : ""}${scoreData.earModifier}
+  </span>
+</div>
+
+<div class="small">
+  Eyes (light):
+  <span class="${getModifierBoxClass(scoreData.eyeModifier)}">
+    ${scoreData.eyeModifier > 0 ? "+" : ""}${scoreData.eyeModifier}
+  </span>
+</div>
+  `;
+}
+
+    function formatBracketRound(title, roundData) {
+      const matchupsHtml = roundData.results.map((match, index) => {
+        const finalRoll = match.rounds[match.rounds.length - 1];
+
+        return `
+          <div class="matchup">
+            <div><strong>${title} Match ${index + 1}</strong></div>
+<div class="small" style="margin-top: 6px; margin-bottom: 10px; padding: 6px 8px; background: #ffffff; border: 1px solid #ddd; border-radius: 6px;">
+  <strong>Environment:</strong> Temperature: ${result.environment.temperature}, Light: ${result.environment.light}
+</div>
+            <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+            <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+  Winner: ${match.winner.name}
+  ${getStudentBadge(match.winner)}
+</div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="round-column">
+          <div class="round-title">${title}</div>
+          ${matchupsHtml}
+        </div>
+      `;
+    }
+
+   const output = document.getElementById("output");
+
+function renderApp() {
+  if (currentScreen === "home") {
+  output.innerHTML = `
+    <div class="center-screen fade-in-up">
+      <button onclick="startSimulation()">Start Simulation</button>
+    </div>
+
+    <img src="assets/logo/TLL_Color.png" class="logo-corner" />
+  `;
+}
+
+  else if (currentScreen === "concept") {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Concept</h2>
+        <p>Organisms survive based on how well their traits match the environment.</p>
+        <button onclick="goToNext()">Continue</button>
+      </div>
+    `;
+  }
+
+ else if (currentScreen === "creation") {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Design Your Mupal</h2>
+      <p>Roll to determine your Mupal’s traits. Then give your Mupal a name before it enters the competition.</p>
+
+      <div class="creation-layout">
+
+        <div class="creation-left">
+          <div class="section" style="margin-top: 16px;">
+            <h3>Ears</h3>
+            <p class="small">
+              ${studentMupalState.ears ? getTraitDisplayLabel(studentMupalState.ears) : "Not rolled yet"}
+            </p>
+
+            ${
+              studentMupalState.ears
+                ? `<p class="small">Ear trait assigned.</p>`
+                : `<button onclick="rollStudentEars()">Roll Ears</button>`
+            }
+          </div>
+
+          <div class="section" style="margin-top: 16px;">
+            <h3>Eyes</h3>
+            <p class="small">
+              ${studentMupalState.eyes ? getTraitDisplayLabel(studentMupalState.eyes) : "Not rolled yet"}
+            </p>
+
+            ${
+              studentMupalState.eyes
+                ? `<p class="small">Eye trait assigned.</p>`
+                : `<button onclick="rollStudentEyes()">Roll Eyes</button>`
+            }
+          </div>
+
+          <div class="section" style="margin-top: 16px;">
+            <h3>Name Your Mupal</h3>
+            <input
+              type="text"
+              value="${studentMupalState.name}"
+              oninput="updateStudentName(this.value)"
+              placeholder="Enter a name"
+              style="padding: 10px; font-size: 1rem; width: 100%; max-width: 320px;"
+            />
+          </div>
+        </div>
+
+        <div class="creation-right">
+          <div class="section">
+            <h3>Your Mupal</h3>
+            ${renderPartialMupalVisual(studentMupalState)}
+          </div>
+
+          <div class="section">
+            <h3>Mupal Summary</h3>
+
+            <p class="small" id="student-summary-name">
+              Name: <strong>${studentMupalState.name || "Not named yet"}</strong>
+            </p>
+
+            <p class="small">
+              Ears: ${studentMupalState.ears ? getTraitDisplayLabel(studentMupalState.ears) : "Not rolled yet"}
+            </p>
+
+            <p class="small">
+              Eyes: ${studentMupalState.eyes ? getTraitDisplayLabel(studentMupalState.eyes) : "Not rolled yet"}
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="creation-bottom">
+        <button onclick="enterCompetition()">Enter Competition</button>
+        <p class="small" style="margin-top: 8px;">
+          Roll both traits and enter a name before entering the competition.
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+  else if (currentScreen === "environment") {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Environment Reveal</h2>
+
+      <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 12px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+        <p><strong>Temperature:</strong> ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature}</p>
+        <p><strong>Light:</strong> ${getLightIcon(result.environment.light)} ${result.environment.light}</p>
+      </div>
+
+      <button onclick="beginRound1()">Begin Round 1</button>
+    </div>
+  `;
+}
+
+else if (currentScreen === "round1") {
+  const match = result.round1.results[0];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+    if (!revealedMatches.round1 && !rollingStates.round1) {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 1</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+        </div>
+
+        <div class="section" style="margin-top: 16px;">
+          <h3>Prediction</h3>
+          <p>Which Mupal is more likely to win?</p>
+
+          <button onclick="setPrediction('round1', 'A')" style="margin-right: 8px;">Mupal A</button>
+<button onclick="setPrediction('round1', 'B')">Mupal B</button>
+
+          ${
+            predictions.round1
+              ? `
+                <p class="small" style="margin-top: 12px;">
+                  Your prediction: <strong>Mupal ${predictions.round1}</strong>
+                </p>
+                <button onclick="revealMatch('round1')">Run Match</button>
+              `
+              : `
+                <p class="small" style="margin-top: 12px;">
+                  Choose Mupal A or Mupal B to continue.
+                </p>
+              `
+          }
+        </div>
+      </div>
+    `;
+  }
+  else if (rollingStates.round1) {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 1</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+            ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+            ${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div style="text-align: center; padding: 24px 0;">
+            <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+            <div><strong>Rolling...</strong></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 1</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+  <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+</div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+
+<div class="section" style="margin-top: 16px;">
+  <h3>Prediction Result</h3>
+
+  <p class="small">
+    You predicted: <strong>Mupal ${predictions.round1}</strong>
+  </p>
+
+  <p class="small">
+    Actual winner: <strong>${match.winner === match.mupalA ? "Mupal A" : "Mupal B"}</strong>
+  </p>
+
+  <p class="small" style="margin-top: 8px;">
+    <strong>${getMatch1PredictionOutcome(match)}</strong>
+  </p>
+
+  <p class="small" style="margin-top: 8px;">
+    ${getMatch1EvidenceFeedback(match)}
+  </p>
+</div>
+
+        <button onclick="goToNextMatch()">Next Match</button>
+      </div>
+    `;
+  }
+}
+
+  else if (currentScreen === "round1match2") {
+  const match = result.round1.results[1];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  if (!revealedMatches.round1match2 && !rollingStates.round1match2) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 2</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+      </div>
+
+      ${renderPredictionBlock('round1match2')}
+    </div>
+  `;
+}
+else if (rollingStates.round1match2) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 2</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 2</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+  <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+</div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToMatch3()">Next Match</button>
+      </div>
+    `;
+  }
+}
+
+  else if (currentScreen === "round1match3") {
+  const match = result.round1.results[2];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  if (!revealedMatches.round1match3 && !rollingStates.round1match3) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 3</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+      </div>
+
+      ${renderPredictionBlock('round1match3')}
+    </div>
+  `;
+}
+else if (rollingStates.round1match3) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 3</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 3</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+  <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+</div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToMatch4()">Next Match</button>
+      </div>
+    `;
+  }
+}
+
+  else if (currentScreen === "round1match4") {
+    const match = result.round1.results[3];
+    const finalRoll = match.rounds[match.rounds.length - 1];
+
+    if (!revealedMatches.round1match4 && !rollingStates.round1match4) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 4</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+      </div>
+
+      ${renderPredictionBlock('round1match4')}
+    </div>
+  `;
+}
+else if (rollingStates.round1match4) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 — Match 4</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 1 — Match 4</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+  <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+</div>
+
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToRound1Summary()">Round 1 Summary</button>
+      </div>
+    `;
+  }
+ }
+else if (currentScreen === "round1summary") {
+  const winners = result.round1.results.map((match, index) => {
+    return `
+      <div class="matchup">
+        <div><strong>Match ${index + 1}</strong></div>
+        <div class="small" style="margin-top: 6px;">
+          Winner: <span class="${match.winner.isStudent ? "student-name" : ""}">${match.winner.name}</span>
+          ${getStudentBadge(match.winner)}
+        </div>
+        <div class="small">Ears: ${getTraitDisplayLabel(match.winner.ears)}</div>
+        <div class="small">Eyes: ${getTraitDisplayLabel(match.winner.eyes)}</div>
+      </div>
+    `;
+  }).join("");
+
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 1 Summary</h2>
+      <p>Round 1 is complete. Review the winners before moving on.</p>
+
+      <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+        <strong>Environment:</strong> Temperature: ${result.environment.temperature}, Light: ${result.environment.light}
+      </div>
+
+      ${winners}
+
+      <button onclick="goToIntervention()">Proceed to Intervention</button>
+    </div>
+  `;
+}
+else if (currentScreen === "intervention") {
+  const student = result.studentMupal;
+
+  output.innerHTML = `
+    <div class="section">
+      <h2>Intervention</h2>
+
+      <p>Based on what you observed in Round 1, you may adjust one trait of your Mupal.</p>
+
+      <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+        <strong>Environment:</strong> Temperature: ${result.environment.temperature}, Light: ${result.environment.light}
+      </div>
+
+      <div class="matchup">
+        <div><strong>Your Mupal</strong></div>
+        <div class="small">${renderMupalVisual(student)}</div>
+      </div>
+
+      <div class="section" style="margin-top: 16px;">
+        <h3>Choose a trait to modify</h3>
+
+        <button onclick="setInterventionTrait('ears')" style="margin-right: 8px;">
+  Ears (${getTraitDisplayLabel(student.ears)})
+</button>
+
+<button onclick="setInterventionTrait('eyes')">
+  Eyes (${getTraitDisplayLabel(student.eyes)})
+</button>
+      </div>
+
+      ${
+        intervention.trait
+          ? `
+            <div class="section" style="margin-top: 16px;">
+              <h3>Adjust ${intervention.trait}</h3>
+
+              <button onclick="setInterventionDirection('up')" style="margin-right: 8px;">
+                Increase Size
+              </button>
+
+              <button onclick="setInterventionDirection('down')">
+                Decrease Size
+              </button>
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        intervention.trait && intervention.direction
+          ? `
+            <div class="section" style="margin-top: 16px;">
+              <p class="small">
+  Selected: <strong>
+    ${intervention.trait === "ears" ? "Ears" : "Eyes"} →
+    ${intervention.direction === "up" ? "Increase Size" : "Decrease Size"}
+  </strong>
+</p>
+
+              <button onclick="applyIntervention()">Apply Change & Continue</button>
+            </div>
+          `
+          : ""
+      }
+    </div>
+  `;
+}
+else if (currentScreen === "reinsertionNotice") {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Your Mupal Returns</h2>
+
+      <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+        <strong>Environment:</strong>
+        Temperature: ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+        Light: ${getLightIcon(result.environment.light)} ${result.environment.light}
+      </div>
+
+      <div style="text-align: center; margin-bottom: 16px;">
+        ${renderMupalVisual(result.studentMupal)}
+      </div>
+
+      <p>
+        Your Mupal was eliminated in Round 1.
+      </p>
+
+      <p>
+        After your intervention, your modified Mupal has been returned to the bracket so you can test whether your change helps under these same environmental conditions.
+      </p>
+
+      <p class="small" style="margin-top: 12px;">
+        Record on your lab sheet how your intervention changed your Mupal before continuing.
+      </p>
+
+      <button onclick="goToRound2()">Begin Round 2</button>
+    </div>
+  `;
+}
+
+else if (currentScreen === "round2") {
+  const match = result.round2.results[0];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  if (!revealedMatches.round2 && !rollingStates.round2) {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 2 — Match 1</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+        </div>
+
+        ${renderPredictionBlock('round2')}
+      </div>
+    `;
+  }
+else if (rollingStates.round2) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 2</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 2 — Match 1</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToRound2Match2()">Next Match</button>
+      </div>
+    `;
+  }
+}
+else if (currentScreen === "round2match2") {
+  const match = result.round2.results[1];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  if (!revealedMatches.round2match2 && !rollingStates.round2match2) {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 2 — Match 2</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+        </div>
+
+        ${renderPredictionBlock('round2match2')}
+      </div>
+    `;
+  }
+else if (rollingStates.round2match2) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Round 2 — Match 2</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Round 2 — Match 2</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToFinal()">Final Round</button>
+      </div>
+    `;
+  }
+}
+else if (currentScreen === "final") {
+  const match = result.finalRound.results[0];
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  if (!revealedMatches.final && !rollingStates.final) {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Final Match</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; gap: 32px; margin-top: 12px;">
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal A</strong></div>
+    ${renderMupalVisual(match.mupalA)}
+  </div>
+
+  <div style="font-weight: bold; font-size: 18px;">
+    vs
+  </div>
+
+  <div style="text-align: center;">
+    <div class="small"><strong>Mupal B</strong></div>
+    ${renderMupalVisual(match.mupalB)}
+  </div>
+
+</div>
+        </div>
+
+        ${renderPredictionBlock('final')}
+      </div>
+    `;
+  }
+else if (rollingStates.final) {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Final Match</h2>
+
+      <div class="matchup">
+        <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+          <strong>Environment:</strong>
+          ${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+          ${getLightIcon(result.environment.light)} ${result.environment.light}
+        </div>
+
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🎲</div>
+          <div><strong>Rolling...</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+  else {
+    output.innerHTML = `
+      <div class="section">
+        <h2>Final Round</h2>
+
+        <div class="matchup">
+          <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+            <strong>Environment:</strong>
+${getTemperatureIcon(result.environment.temperature)} ${result.environment.temperature},
+${getLightIcon(result.environment.light)} ${result.environment.light}
+          </div>
+
+          <div class="match-results">
+  <div class="match-column">
+    ${formatScoreDetails("Mupal A", match.mupalA, finalRoll.mupalA, match.winner === match.mupalA)}
+  </div>
+
+  <div class="match-column">
+    ${formatScoreDetails("Mupal B", match.mupalB, finalRoll.mupalB, match.winner === match.mupalB)}
+  </div>
+</div>
+
+          <div class="winner ${match.winner.isStudent ? "student-name" : ""}">
+            Winner: ${match.winner.name}
+            ${getStudentBadge(match.winner)}
+          </div>
+        </div>
+
+        <button onclick="goToChampion()">See Champion</button>
+      </div>
+    `;
+  }
+}
+else if (currentScreen === "champion") {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Champion</h2>
+
+      ${renderChampionCelebration(result.champion)}
+
+      <div class="champion-box ${result.champion.isStudent ? "student-highlight" : ""}" style="margin-top: 12px;">
+        <div class="${result.champion.isStudent ? "student-name" : ""}">
+          <strong>${result.champion.name}</strong>
+          ${getStudentBadge(result.champion)}
+        </div>
+        <div class="small">Ears: ${getTraitDisplayLabel(result.champion.ears)}</div>
+        <div class="small">Eyes: ${getTraitDisplayLabel(result.champion.eyes)}</div>
+      </div>
+
+      <button onclick="goToReflection()">Reflection</button>
+    </div>
+  `;
+}
+else if (currentScreen === "reflection") {
+  output.innerHTML = `
+    <div class="section">
+      <h2>Reflection</h2>
+
+      <p>Before starting a new run, reflect on what happened in this environment.</p>
+
+      <div class="small" style="margin-top: 6px; margin-bottom: 12px; padding: 8px 10px; background: #ffffff; border: 1px solid #ddd; border-radius: 8px;">
+        <strong>Environment:</strong> Temperature: ${result.environment.temperature}, Light: ${result.environment.light}
+      </div>
+
+      <div class="matchup">
+        <div><strong>Champion</strong></div>
+        <div class="${result.champion.isStudent ? "student-name" : ""}">
+          <strong>${result.champion.name}</strong>
+          ${getStudentBadge(result.champion)}
+        </div>
+        <div class="small">Ears: ${getTraitDisplayLabel(result.champion.ears)}</div>
+<div class="small">Eyes: ${getTraitDisplayLabel(result.champion.eyes)}</div>
+      </div>
+
+      <div class="section" style="margin-top: 16px;">
+        <p class="small">
+          Answer the analysis questions in your lab sheet before continuing.
+        </p>
+
+        <button onclick="rerunSimulation()">Start New Run</button>
+      </div>
+    </div>
+  `;
+}
+}
+function startSimulation() {
+  currentScreen = "concept";
+  renderApp();
+}
+
+function goToNext() {
+  currentScreen = "creation";
+  renderApp();
+}
+
+function goToEnvironment() {
+  currentScreen = "environment";
+  renderApp();
+}
+
+function beginRound1() {
+  currentScreen = "round1";
+  renderApp();
+}
+function setPrediction(screenKey, choice) {
+  predictions[screenKey] = choice;
+  renderApp();
+}
+function renderPredictionBlock(screenKey) {
+  return `
+    <div class="section" style="margin-top: 16px;">
+      <h3>Prediction</h3>
+      <p>Which Mupal is more likely to win?</p>
+
+      <button onclick="setPrediction('${screenKey}', 'A')" style="margin-right: 8px;">Mupal A</button>
+      <button onclick="setPrediction('${screenKey}', 'B')">Mupal B</button>
+
+      ${
+        predictions[screenKey]
+          ? `
+            <p class="small" style="margin-top: 12px;">
+              Your prediction: <strong>Mupal ${predictions[screenKey]}</strong>
+            </p>
+            <button onclick="revealMatch('${screenKey}')">Run Match</button>
+          `
+          : `
+            <p class="small" style="margin-top: 12px;">
+              Choose Mupal A or Mupal B to continue.
+            </p>
+          `
+      }
+    </div>
+  `;
+}
+function getMatch1PredictionOutcome(match) {
+  const actualWinner = match.winner === match.mupalA ? "A" : "B";
+
+  if (predictions.round1 === actualWinner) {
+    return "Your prediction matched the outcome.";
+  }
+
+  return "Your prediction did not match the outcome.";
+}
+function getMatch1EvidenceFeedback(match) {
+  const finalRoll = match.rounds[match.rounds.length - 1];
+
+  const totalA = finalRoll.mupalA.earModifier + finalRoll.mupalA.eyeModifier;
+  const totalB = finalRoll.mupalB.earModifier + finalRoll.mupalB.eyeModifier;
+
+  if (totalA > totalB) {
+    return "Mupal A had the stronger trait advantage in this environment.";
+  }
+
+  if (totalB > totalA) {
+    return "Mupal B had the stronger trait advantage in this environment.";
+  }
+
+  return "Both Mupals had the same total trait advantage in this environment.";
+}
+function goToNextMatch() {
+  predictions.round1 = null;
+  currentScreen = "round1match2";
+  renderApp();
+}
+function goToMatch3() {
+  currentScreen = "round1match3";
+  renderApp();
+}
+
+function goToMatch4() {
+  currentScreen = "round1match4";
+  renderApp();
+}
+
+function goToRound1Summary() {
+  currentScreen = "round1summary";
+  renderApp();
+}
+
+function goToIntervention() {
+  currentScreen = "intervention";
+  renderApp();
+}
+function getStudentRound1MatchIndex() {
+  return result.round1.results.findIndex((match) =>
+    match.mupalA.isStudent || match.mupalB.isStudent
+  );
+}
+
+function rebuildLaterRoundsFromRound1() {
+  const round1Winners = result.round1.results.map((match) => match.winner);
+
+  const round2Match1 = window.MupalEngineV1.resolveMatchup(
+    round1Winners[0],
+    round1Winners[1],
+    result.environment
+  );
+
+  const round2Match2 = window.MupalEngineV1.resolveMatchup(
+    round1Winners[2],
+    round1Winners[3],
+    result.environment
+  );
+
+  result.round2.results = [round2Match1, round2Match2];
+
+  const finalMatch = window.MupalEngineV1.resolveMatchup(
+    round2Match1.winner,
+    round2Match2.winner,
+    result.environment
+  );
+
+  result.finalRound.results = [finalMatch];
+  result.champion = finalMatch.winner;
+}
+
+function goToRound2() {
+  currentScreen = "round2";
+  renderApp();
+}
+function goToRound2Match2() {
+  currentScreen = "round2match2";
+  renderApp();
+}
+
+function goToFinal() {
+  currentScreen = "final";
+  renderApp();
+}
+function goToChampion() {
+  currentScreen = "champion";
+  renderApp();
+}
+
+function goToReflection() {
+  currentScreen = "reflection";
+  renderApp();
+}
+function getRandomTrait(options) {
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+function rollStudentEars() {
+  if (studentMupalState.ears) return;
+  studentMupalState.ears = getRandomTrait(EAR_TRAIT_OPTIONS);
+  renderApp();
+}
+
+function rollStudentEyes() {
+  if (studentMupalState.eyes) return;
+  studentMupalState.eyes = getRandomTrait(EYE_TRAIT_OPTIONS);
+  renderApp();
+}
+
+function updateStudentName(value) {
+  studentMupalState.name = value;
+
+  const trimmedValue = value.trim();
+
+  const preview = document.getElementById("student-name-preview");
+  if (preview) {
+    preview.innerHTML = `Name: <strong>${trimmedValue || "Not named yet"}</strong>`;
+  }
+
+  const summary = document.getElementById("student-summary-name");
+  if (summary) {
+    summary.innerHTML = `Name: <strong>${trimmedValue || "Not named yet"}</strong>`;
+  }
+}
+
+function enterCompetition() {
+  const trimmedName = studentMupalState.name.trim();
+
+  if (!trimmedName || !studentMupalState.ears || !studentMupalState.eyes) {
+    return;
+  }
+
+  studentMupalState.name = trimmedName;
+  generateNewRun();
+  currentScreen = "environment";
+  renderApp();
+}
+
+function setInterventionTrait(trait) {
+  intervention.trait = trait;
+  intervention.direction = null; // reset direction if trait changes
+  renderApp();
+}
+
+function setInterventionDirection(direction) {
+  intervention.direction = direction;
+  renderApp();
+}
+
+function applyIntervention() {
+  const student = result.studentMupal;
+
+  if (intervention.trait === "ears") {
+    student.ears = adjustTrait(student.ears, intervention.direction);
+  }
+
+  if (intervention.trait === "eyes") {
+    student.eyes = adjustTrait(student.eyes, intervention.direction);
+  }
+  studentMupalState.name = student.name;
+  studentMupalState.ears = student.ears;
+  studentMupalState.eyes = student.eyes;
+
+  const studentMatchIndex = getStudentRound1MatchIndex();
+
+if (studentMatchIndex !== -1) {
+  const studentMatch = result.round1.results[studentMatchIndex];
+
+  if (studentMatch.loser.isStudent) {
+    studentReinsertedAfterIntervention = true;
+    studentMatch.winner = student;
+    studentMatch.loser = studentMatch.mupalA.isStudent ? studentMatch.mupalB : studentMatch.mupalA;
+  } else {
+    studentReinsertedAfterIntervention = false;
+    studentMatch.winner = student;
+  }
+
+  rebuildLaterRoundsFromRound1();
+}
+intervention = {
+  trait: null,
+  direction: null
+};
+
+currentScreen = studentReinsertedAfterIntervention ? "reinsertionNotice" : "round2";
+renderApp();
+}
+
+function restartSimulation() {
+  currentScreen = "home";
+
+  revealedMatches = {
+    round1: false,
+    round1match2: false,
+    round1match3: false,
+    round1match4: false,
+    round2: false,
+    round2match2: false,
+    final: false
+  };
+studentReinsertedAfterIntervention = false;
+
+  predictions = {
+    round1: null,
+    round1match2: null,
+    round1match3: null,
+    round1match4: null,
+    round2: null,
+    round2match2: null,
+    final: null
+  };
+
+  intervention = {
+    trait: null,
+    direction: null
+  };
+
+  generateNewRun();
+  renderApp();
+}
+function rerunSimulation() {
+  revealedMatches = {
+    round1: false,
+    round1match2: false,
+    round1match3: false,
+    round1match4: false,
+    round2: false,
+    round2match2: false,
+    final: false
+  };
+studentReinsertedAfterIntervention = false;
+
+  predictions = {
+    round1: null,
+    round1match2: null,
+    round1match3: null,
+    round1match4: null,
+    round2: null,
+    round2match2: null,
+    final: null
+  };
+
+  intervention = {
+    trait: null,
+    direction: null
+  };
+
+  generateNewRun();
+  currentScreen = "environment";
+  renderApp();
+}
+
+function revealMatch(screenKey) {
+  rollingStates[screenKey] = true;
+  renderApp();
+
+  setTimeout(() => {
+    rollingStates[screenKey] = false;
+    revealedMatches[screenKey] = true;
+    renderApp();
+  }, 800);
+}
+function getModifierBoxClass(value) {
+  if (value > 0) return "mod-box mod-box-positive";
+  if (value < 0) return "mod-box mod-box-negative";
+  return "mod-box mod-box-neutral";
+}
+
+function revealMatch1Result() {
+  revealedMatches.round1 = true;
+  renderApp();
+}
+function revealMatch2Result() {
+  revealedMatches.round1match2 = true;
+  renderApp();
+}
+function revealMatch3Result() {
+  revealedMatches.round1match3 = true;
+  renderApp();
+}
+function revealMatch4Result() {
+  revealedMatches.round1match4 = true;
+  renderApp();
+}
+function revealRound2Match1Result() {
+  revealedMatches.round2 = true;
+  renderApp();
+}
+function revealRound2Match2Result() {
+  revealedMatches.round2match2 = true;
+  renderApp();
+}
+function revealFinalMatchResult() {
+  revealedMatches.final = true;
+  renderApp();
+}
+function adjustTrait(current, direction) {
+  const scales = {
+    ears: ["ears_super_small", "ears_small", "ears_medium", "ears_large", "ears_very_large"],
+    eyes: ["eyes_very_small", "eyes_small", "eyes_medium", "eyes_large", "eyes_very_large"]
+  };
+
+  const type = current.startsWith("ears_") ? "ears" : "eyes";
+  const scale = scales[type];
+  let index = scale.indexOf(current);
+
+  if (direction === "up" && index < scale.length - 1) index++;
+  if (direction === "down" && index > 0) index--;
+
+  return scale[index];
+}
+
+function generateNewRun() {
+  result = window.MupalEngineV1.simulateTournament({
+    name: studentMupalState.name,
+    ears: studentMupalState.ears,
+    eyes: studentMupalState.eyes
+  });
+}
+
+renderApp();
+</script>
+</body>
+</html>
