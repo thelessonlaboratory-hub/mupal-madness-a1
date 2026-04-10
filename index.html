@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mupal Madness Engine Test</title>
+  <title>Mupal Madness!</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -288,10 +288,16 @@ button:hover {
 .center-screen {
   display: flex;
   flex-direction: column;
-  justify-content: center;  /* vertical center */
-  align-items: center;      /* horizontal center */
-  height: 70vh;             /* takes most of screen height */
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
   text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.center-screen button {
+  position: relative;
+  z-index: 3;
 }
 .fade-in-up {
   animation: fadeInUp 0.6s ease-out;
@@ -314,6 +320,8 @@ button:hover {
   width: 360px;
   opacity: 0.9;
   animation: fadeInLogo 0.8s ease-out;
+  z-index: 1;
+  pointer-events: none;
 }
 
 @keyframes fadeInLogo {
